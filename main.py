@@ -5,12 +5,19 @@ from kivy.core.window import Window
 
 class Calculator(MDApp):
 
+    def __init__(self, **kwargs):
+        super(Calculator, self).__init__(**kwargs)
+        self.eq = None
+
     def build(self):
         Window.size = (320, 505)
         main_kv = Builder.load_file('calc.kv')
         return main_kv
 
     def button(self, button):
+        if self.eq:
+            self.eq = False
+            self.root.ids.input_box.text = ''
         if button == 'x':
             button = '*'
         prior = self.root.ids.input_box.text
@@ -20,7 +27,7 @@ class Calculator(MDApp):
             if button == '00' or button == '0':
                 self.root.ids.input_box.text = '0'
                 return
-            if button in ('+', '/', 'x', '%'):
+            if button in ('+', '/', '*', '%'):
                 return
             self.root.ids.input_box.text = f'{button}'
 
@@ -28,11 +35,11 @@ class Calculator(MDApp):
             if prior == 'Cannot be divided by 0':
                 prior = ''
 
-            if button in ('+', '/', 'x', '%', '-'):
+            if button in ('+', '/', '*', '%', '-'):
 
                 if self.root.ids.input_box.text[0] == '-':
                     return
-                if self.root.ids.input_box.text[-1] in ('+', '/', 'x', '%', '-'):
+                if self.root.ids.input_box.text[-1] in ('+', '/', '*', '%', '-'):
                     self.root.ids.input_box.text = f'{prior[:-1]}{button}'
                     return
             self.root.ids.input_box.text = ''
@@ -41,6 +48,9 @@ class Calculator(MDApp):
     def clear_entry(self):
         i = -1
         l = len(self.root.ids.input_box.text)
+        if self.root.ids.input_box.text[0] == '-':
+            self.root.ids.input_box.text = ''
+            return
         while i >= -l:
             if self.root.ids.input_box.text[i] in ('+', '-', 'x', '/', '%'):
                 i += l
@@ -56,13 +66,11 @@ class Calculator(MDApp):
     def result(self):
         try:
             self.root.ids.input_box.text = str(eval(self.root.ids.input_box.text))
+            self.eq = True
         except ZeroDivisionError:
             self.root.ids.input_box.text = 'Cannot be divided by 0'
         except Exception:
             pass
-
-    def menu_left(self):
-        pass
 
 
 if __name__ == '__main__':
