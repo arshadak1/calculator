@@ -48,7 +48,7 @@ class Calculator(MDApp):
     def clear_entry(self):
         i = -1
         l = len(self.root.ids.input_box.text)
-        if l != 1 and self.root.ids.input_box.text[0] == '-':
+        if l != 0 and self.root.ids.input_box.text[0] == '-':
             self.root.ids.input_box.text = ''
             return
         while i >= -l:
